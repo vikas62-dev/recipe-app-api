@@ -1,0 +1,22 @@
+# Version of the docker compose syntax. recently version is not needed to be mentioned.
+# version: "3.9"
+
+# Docker compose consists of one more services as needed for the app.
+services:
+  # app is Name of our service.
+  app:
+    # To build the docker file in our current directory, And the context we are using for our app is root/current directory that is represented as "."
+    build:
+      context: .
+      # Build an argument DEV set the value to True. for setting up the dev requirements. 
+      args:
+        - DEV=true
+    # Ports maps our local 8000 to the port 8000 of the docker container. This is how we have access to connect to the server.
+    ports:
+      - "8000:8000"
+    # Volumes are the way of mapping directories from our local system to the docker container.
+    volumes:
+      - ./app:/app
+    # Command that is used to run the service.
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
