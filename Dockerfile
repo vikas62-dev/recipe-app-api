@@ -33,13 +33,23 @@ ARG DEV=false
 #     then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
 # fi && \
 
+# apk add --update --no-cache postgresql-client && \         Here We are installing Postgresql-client, this is the client package that we are gonna need to install inside in the alpine image in order to install Psycopg2 inorder to connect to our postgres database.
+# apk add --update --no-cache --virtual .tmp-build-deps \    
+#     build-base postgresql-dev musl-dev && \               Here we are using --virtual which helps use to install the groups of package with the name called .tmp-build-deps, and inside this group we are installing these temporary packages (build-base, postgresql-dev, musl-dev)
+
+# apk del .tmp-build-deps && \          Here we are removing temporary packages which was installed just for installing the psycopg2. Because to keep the alpine image as light as possible.
+
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     adduser \
         --disabled-password \
         --no-create-home \

@@ -20,3 +20,32 @@ services:
     # Command that is used to run the service.
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+
+    # These are used to tell the app service how to connect to the DB. These creds should match the postgres db creds. 
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    # App service will wait until the db service is up and running.
+    depends_on:
+      - db
+
+  # Defining the db service for the docker. Here db is the hostname of the service. 
+  db:
+    # Defining a light weight db docker image postgres:13-alpine tag. Which is available in docker website.
+    image: postgres:13-alpine
+    # Mapping the directory from the local machine to this container.
+    # dev-db-data:                This is the named volume and this should match the volume name of the local machine.
+    # /var/lib/postgresql/data    This is the path where the data is stored in the container.(to get this path check the official documentation of postgres)
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    # To set the initial DB configuration for new DB service. This for only local development service for production we have to use complex creds.
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+# This is local machine volume directory. Volumes/Named volumes are used for Persistent data, Maps directory in container to local machine. this file system is automatically handled by docker compose.
+volumes:
+  dev-db-data:
