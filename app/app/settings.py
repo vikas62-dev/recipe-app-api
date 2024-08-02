@@ -133,3 +133,11 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+"""
+we are setting the Auth_user_model configuration and we are telling it to use core.User
+So out of all of the models defined in our core app, choose the user model and we will use that for our custom user model.
+we need to make sure that we actually have the core(project/app name) app enabled in the INSTALLED_APPS=[] in settings file.
+otherwise it won't get detected properly.
+"""
+AUTH_USER_MODEL = 'core.User'
