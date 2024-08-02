@@ -17,9 +17,11 @@ services:
     # Volumes are the way of mapping directories from our local system to the docker container.
     volumes:
       - ./app:/app
-    # Command that is used to run the service.
+    # Command initially first command will wait for the db to get started and then migrate our database and then it will run the service/server.
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
 
     # These are used to tell the app service how to connect to the DB. These creds should match the postgres db creds. 
     environment:
